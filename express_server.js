@@ -7,13 +7,25 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 
-
+function generateRandomString() {
+  var randAlphNum = ''
+  var char = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+  for (let i = 0; i < 6; i++) {
+    var randomNumber = Math.floor(Math.random() * Math.floor(char.length))
+    randAlphNum += char[randomNumber]
+  }
+  return randAlphNum
+}
+console.log(generateRandomString())
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
 
 app.get("/", (req, res) => {
   res.send("Hello!");
