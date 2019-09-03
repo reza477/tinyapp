@@ -20,6 +20,10 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+app.post("/urls/:shortURL/delete", (req, res) =>{
+  delete urlDatabase[req.params.shortURL]
+  res.redirect("/urls")
+})
 
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
@@ -45,7 +49,6 @@ app.get("/hello", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
-
 
 app.get("/urls/:shortURL",(req, res) => {
   let templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}
