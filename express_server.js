@@ -20,17 +20,29 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+  // DELETE
 app.post("/urls/:shortURL/delete", (req, res) =>{
   delete urlDatabase[req.params.shortURL]
   res.redirect("/urls")
-})
-
-app.post("/urls", (req, res) => {
-  let longURL = req.body.longURL;
-  let shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL
-  res.redirect("/urls/" + shortURL)
 });
+
+  // EDIT
+app.post("/urls/:shortURL/edit", (req, res) => {
+  const newURL = req.body.longURL;
+  const edit = req.params.shortURL;
+  urlDatabase[edit] = newURL;
+  res.redirect(`/urls/${edit}`);
+  // POST /urls/:id
+  // res.redirect("/urls")
+});
+
+
+// app.post("/urls", (req, res) => {
+//   let longURL = req.body.longURL;
+//   let shortURL = generateRandomString();
+//   urlDatabase[shortURL] = longURL
+//   res.redirect("/urls/" + shortURL)
+// });
 
 app.get("/urls",(req, res) => {
   res.json(urlDatabase);
