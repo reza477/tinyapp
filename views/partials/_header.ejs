@@ -13,6 +13,14 @@
           <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         </div>
       </div>
+
+     <% if(username){ %>
+      <label for="username"><<<------<%- username %>------->>> </label>
+      <form action="/logout" method="POST">
+      <button type="submit" class="btn btn-danger">Log out</button>
+   
+      </form> 
+      <% } else { %>
       <form class="form-inline" action="/login" method="POST">
         <div class="form-group mb-2">
           <label for="username">Enter Your Username</label>
@@ -20,5 +28,6 @@
           <button type="submit" class="btn btn-primary">Gogogogo</button>
         </div>
     </form> 
+    <% } %>
     </nav>
   </header>

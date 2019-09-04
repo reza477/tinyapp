@@ -39,8 +39,13 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 });
 
   // Username
-app.post("/login", (req, res) =>{
+app.post("/login", (req, res) => {
   res.cookie('username',req.body.username)
+  res.redirect("/url")
+})
+
+app.post("/logout", (req, res) => {
+  res.clearCookie('username')
   res.redirect("/url")
 })
 
@@ -66,17 +71,21 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+app.post("/urls/new", (req, res) => {
+  res.render("");
 });
 
+// app.get('*', (request, response) => {
+//   response.redirect('/cookies');
+// });
+
 app.get("/urls/:shortURL",(req, res) => {
-  let templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}
+  let templateVars = { username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}
   res.render("url_shows", templateVars);
 });
 
 app.get("/url", (req, res) => {
-  let templateVars = { urls: urlDatabase, test :"test" };
+  let templateVars = { username: req.cookies["username"], urls: urlDatabase, test :"test" };
   res.render("urls_index", templateVars);
 });
 app.listen(PORT, () => {
