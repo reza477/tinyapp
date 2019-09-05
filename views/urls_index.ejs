@@ -8,14 +8,13 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
 </head>
-<header>
-    <% include ./partials/_header %>
-</header>
+
 <!-- <form method="POST"action="/urls/9sm5xK/delete"></form> -->
 <body>
+        <% include ./partials/_header %> 
   <main style="margin: 1em;">
     <h3>My URLs</h3>
-    <form method="GET" action="/urls/new">
+    <form method="GET" action="/url/new">
       <button type="submit" class="btn btn-danger">Magic</button>
       </form>
     <p><%= test %></p>
