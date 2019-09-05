@@ -16,7 +16,7 @@
       
     
      <% if(user){ %>
-      <label for="username"><<<------<%=user.email%>------->>> </label>
+      <label for="username"><<<------<%=user.email%>------->>>&nbsp </label>
       <form action="/logout" method="POST">
       <button type="submit" class="btn btn-danger">Log out</button>
    
@@ -28,8 +28,7 @@
         </form>
         <label for="username"> --Or-- </label>
       <form action="/login" method="GET">
-      <button type="submit" class="btn btn-primary">Log in</button>
-   
+      <button type="submit" class="btn btn-primary">Log in</button>  
       </form>
      
     <% } %>
