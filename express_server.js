@@ -149,7 +149,8 @@ app.get("/urls/new", (req,res) => {
   });
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/urls")
+  // res.send("Hello!");
 });
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -160,18 +161,14 @@ app.get("/hello", (req, res) => {
 });
 app.get("/u/:shortURL", (req, res) => { 
   const shortURL = req.params.shortURL
-  console.log(shortURL)
-  console.log(urlDatabase)
   const longURL = urlDatabase[shortURL].longURL
   
   res.redirect("https://" + longURL);
 });
 
 app.get("/urls/:shortURL",(req, res) => {
-  console.log(req.params.shortURL)
   let userId = req.session.user_id
   let user = users[userId]
-  console.log("------------",urlDatabase[req.params.shortURL].userID)
   if (urlDatabase[req.params.shortURL].userID !== userId) {
       res.redirect("/login")
   }
@@ -190,7 +187,6 @@ app.get("/urls", (req, res) => {
 
       userURLs[key] = urlDatabase[key]
     }
-    console.log(userURLs)
   }
   let templateVars = { user, urls: userURLs, test :"test" };
   res.render("urls_index", templateVars);
