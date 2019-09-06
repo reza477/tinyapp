@@ -4,7 +4,7 @@ const PORT = 8080; // default port 8080
 const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-// const helpers = require('../helpers')
+const helper = require('./views/helper')
 
 
 var cookieSession = require('cookie-session')
@@ -60,29 +60,29 @@ const getUserByEmail = function(email, database) {
   }
 };
 
-function doesemailexist (inputemail) {
-  for (let key in users) {
-    if (inputemail === users[key].email) {
-      return true
-    }
-  }
-}
+// function doesemailexist (inputemail) {
+//   for (let key in users) {
+//     if (inputemail === users[key].email) {
+//       return true
+//     }
+//   }
+// }
 
-function doesemailpassexist (inputemail,inputpass) {
-  for (let key in users) {
-    if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
-      return true
-    }
-  }
-}
+// function doesemailpassexist (inputemail,inputpass) {
+//   for (let key in users) {
+//     if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
+//       return true
+//     }
+//   }
+// }
 
-function getUserByEmailPassword(inputemail,inputpass) {
-  for (let key in users) {
-    if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
-      return users[key]
-    }
-  }
-}
+// function getUserByEmailPassword(inputemail,inputpass) {
+//   for (let key in users) {
+//     if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
+//       return users[key]
+//     }
+//   }
+// }
 const urlDatabase = {
   b6UTxQ: 
     { longURL: "https://www.tsn.ca", userID: "userRandomID" },
@@ -92,7 +92,7 @@ const urlDatabase = {
   // DELETE
 app.post("/urls/:shortURL/delete", (req, res) =>{
   delete urlDatabase[req.params.shortURL]
-  res.redirect("/url")
+  res.redirect("/urls")
 });
 
   // EDIT
@@ -108,7 +108,7 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null
   // res.clearCookie('user_id')
-  res.redirect("/url")
+  res.redirect("/urls")
 })
 
 app.get("/register", (req, res) => {
@@ -127,7 +127,7 @@ app.post("/register", (req, res) => {
     res.send("You shall not pass, (Missing username or Password)")
     return
   } 
-  if (doesemailexist(username)) {
+  if (helper.doesemailexist(username,users)) {
     res.status(400);
     res.send("You shall not pass, Missing username or Password")
     return
@@ -148,7 +148,7 @@ app.post("/register", (req, res) => {
   req.session.email = username
   // res.cookie('user_id' , randomId)
   // res.cookie('email', username)
-  res.redirect("/url")
+  res.redirect("/urls")
 })
 
 app.get("/login", (req, res) => {
@@ -159,7 +159,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.username
   const password = req.body.password
-  if ( !doesemailexist(email)) {
+  if ( !helper.doesemailexist(email, users)) {
     res.status(403)
     res.send('Can i interest you in registering?')
     return
@@ -169,14 +169,14 @@ app.post("/login", (req, res) => {
   //   res.send('Lost your password? click recover password.')
   //   return
   // }
-    const user = getUserByEmailPassword(email, password)
+    const user = helper.getUserByEmailPassword(email, password, users)
     const userId = user.id
    // returns true
   req.session.user_id = userId
   // res.cookie('user_id' , userId)
   
 
-  res.redirect("/url")
+  res.redirect("/urls")
 });
 
 // const urlDatabase = {
@@ -221,6 +221,8 @@ app.get("/hello", (req, res) => {
 // app.get('*', (request, response) => {
 //   response.redirect('/cookies');
 // });
+
+
 // const urlDatabase = {
 //   b6UTxQ: 
 //     { longURL: "https://www.tsn.ca", userID: "userRandomID" },
@@ -229,8 +231,11 @@ app.get("/hello", (req, res) => {
 // };
 app.get("/u/:shortURL", (req, res) => { 
   const shortURL = req.params.shortURL
+  console.log(shortURL)
+  console.log(urlDatabase)
   const longURL = urlDatabase[shortURL].longURL
-  res.redirect(longURL);
+  
+  res.redirect("https://" + longURL);
 });
 
 app.get("/urls/:shortURL",(req, res) => {
@@ -242,7 +247,7 @@ app.get("/urls/:shortURL",(req, res) => {
       res.redirect("/login")
   }
 
-  let templateVars = { user, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}
+  let templateVars = { user, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL}
   res.render("url_shows", templateVars);
  
 });
@@ -256,7 +261,7 @@ app.get("/urls/:shortURL",(req, res) => {
 
 // /urls page will need to filter the entire list in the urlDatabase 
 // by comparing the userID with the logged-in user's ID
-app.get("/url", (req, res) => {
+app.get("/urls", (req, res) => {
   // lookup user with userid
   let userId = req.session.user_id
   // let userId = req.cookies.user_id

@@ -1,5 +1,7 @@
 
-function doesemailexist (inputemail) {
+const bcrypt = require('bcrypt');
+
+function doesemailexist (inputemail,users) {
   for (let key in users) {
     if (inputemail === users[key].email) {
       return true
@@ -7,7 +9,7 @@ function doesemailexist (inputemail) {
   }
 }
 
-function doesemailpassexist (inputemail,inputpass) {
+function doesemailpassexist (inputemail,inputpass,users) {
   for (let key in users) {
     if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
       return true
@@ -15,7 +17,7 @@ function doesemailpassexist (inputemail,inputpass) {
   }
 }
 
-function getUserByEmailPassword(inputemail,inputpass) {
+function getUserByEmailPassword(inputemail,inputpass,users) {
   for (let key in users) {
     if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
       return users[key]
@@ -23,4 +25,8 @@ function getUserByEmailPassword(inputemail,inputpass) {
   }
 }
 
-module.exports = helper;
+module.exports = {
+  doesemailexist,
+  doesemailpassexist,
+  getUserByEmailPassword
+};
