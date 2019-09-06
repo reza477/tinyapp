@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080; 
 const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -13,8 +13,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['hmjg'],
 
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  maxAge: 24 * 60 * 60 * 1000 
 }))
 
 app.set('view engine', 'ejs');
@@ -28,15 +27,6 @@ function generateRandomString() {
   }
   return randAlphNum
 }
-
-// const getUserByEmail = function(email, database) {
-//   for (let key in database) { 
-//     if (database[key].email === email) {
-      
-//     }
-//   }
-//   return user;
-// };
 
 const users = { 
   "userRandomID": {
@@ -60,51 +50,25 @@ const getUserByEmail = function(email, database) {
   }
 };
 
-// function doesemailexist (inputemail) {
-//   for (let key in users) {
-//     if (inputemail === users[key].email) {
-//       return true
-//     }
-//   }
-// }
-
-// function doesemailpassexist (inputemail,inputpass) {
-//   for (let key in users) {
-//     if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
-//       return true
-//     }
-//   }
-// }
-
-// function getUserByEmailPassword(inputemail,inputpass) {
-//   for (let key in users) {
-//     if (inputemail === users[key].email && bcrypt.compareSync(inputpass, users[key].password)) {
-//       return users[key]
-//     }
-//   }
-// }
 const urlDatabase = {
   b6UTxQ: 
     { longURL: "https://www.tsn.ca", userID: "userRandomID" },
   i3BoGr:
     { longURL: "https://www.google.ca", userID: "userRandomID" }
 };
-  // DELETE
 app.post("/urls/:shortURL/delete", (req, res) =>{
   delete urlDatabase[req.params.shortURL]
   res.redirect("/urls")
 });
 
-  // EDIT
 app.post("/urls/:shortURL/edit", (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = req.params.shortURL;
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL].longURL = longURL;
   res.redirect(`/urls/${shortURL}`);
 
 });
 
-  // Delete Cookies
 app.post("/logout", (req, res) => {
   req.session = null
   // res.clearCookie('user_id')
@@ -119,7 +83,6 @@ app.post("/register", (req, res) => {
 
   
   let randomId = generateRandomString()
-  // const { username, password } = req.body;
   const username = req.body.username
   const password = req.body.password
   if (username === "" || username === undefined || password === "" || password === undefined) {
@@ -140,14 +103,10 @@ app.post("/register", (req, res) => {
     password: hashedPassword,
   };
   
-  // const password = "purple-monkey-dinosaur"; // found in the req.params object
 
   
-  // console.log(users)
   req.session.user_id = randomId;
   req.session.email = username
-  // res.cookie('user_id' , randomId)
-  // res.cookie('email', username)
   res.redirect("/urls")
 })
 
@@ -164,30 +123,17 @@ app.post("/login", (req, res) => {
     res.send('Can i interest you in registering?')
     return
   } 
-  // if ( !doesemailpassexist(email, password)) {
-  //   res.status(403)
-  //   res.send('Lost your password? click recover password.')
-  //   return
-  // }
     const user = helper.getUserByEmailPassword(email, password, users)
     const userId = user.id
-   // returns true
   req.session.user_id = userId
-  // res.cookie('user_id' , userId)
   
 
   res.redirect("/urls")
 });
 
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
-
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let shortURL = generateRandomString();
-  // let userId = req.session.user_id
   
   let userId = req.session.user_id
   urlDatabase[shortURL] = {longURL:longURL , userID:userId}
@@ -196,7 +142,6 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/new", (req,res) => {
     let userId = req.session.user_id
-    // let userId = req.cookies.user_id
     let user = users[userId]
     
     let templateVars = { user }
@@ -213,22 +158,6 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-
-// app.post("/login", (req, res) => {
-//   res.render("");
-// });
-
-// app.get('*', (request, response) => {
-//   response.redirect('/cookies');
-// });
-
-
-// const urlDatabase = {
-//   b6UTxQ: 
-//     { longURL: "https://www.tsn.ca", userID: "userRandomID" },
-//   i3BoGr:
-//     { longURL: "https://www.google.ca", userID: "userRandomID" }
-// };
 app.get("/u/:shortURL", (req, res) => { 
   const shortURL = req.params.shortURL
   console.log(shortURL)
@@ -241,8 +170,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:shortURL",(req, res) => {
   console.log(req.params.shortURL)
   let userId = req.session.user_id
-  // let userId = req.cookies.user_id
   let user = users[userId]
+  console.log("------------",urlDatabase[req.params.shortURL].userID)
   if (urlDatabase[req.params.shortURL].userID !== userId) {
       res.redirect("/login")
   }
@@ -251,36 +180,18 @@ app.get("/urls/:shortURL",(req, res) => {
   res.render("url_shows", templateVars);
  
 });
-
-// const urlDatabase = {
-//   b6UTxQ: 
-//     { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-//   i3BoGr:
-//     { longURL: "https://www.google.ca", userID: "aJ48lW" }
-// };
-
-// /urls page will need to filter the entire list in the urlDatabase 
-// by comparing the userID with the logged-in user's ID
 app.get("/urls", (req, res) => {
-  // lookup user with userid
   let userId = req.session.user_id
-  // let userId = req.cookies.user_id
   let user = users[userId]
-  //filter urls
-  // const userURLs = urlDatabase;
   userURLs = {}
   for (let key in urlDatabase) {
     
     if (urlDatabase[key].userID === userId) {
 
-      // push { short, long, urlId}
       userURLs[key] = urlDatabase[key]
     }
     console.log(userURLs)
   }
-  // how to do .filter?????
-  // pass to view via templatevars
-  // push { short, long, urlId}
   let templateVars = { user, urls: userURLs, test :"test" };
   res.render("urls_index", templateVars);
 });
